@@ -5,19 +5,29 @@
  */
 
 const KEYS = {
-  TESTIMONIALS: 'cw_testimonials',
-  GALLERY: 'cw_gallery',
-  CONTACT_MSGS: 'cw_messages'
+  TESTIMONIALS: "cw_testimonials",
+  GALLERY: "cw_gallery",
+  CONTACT_MSGS: "cw_messages",
 };
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const StorageService = {
   // Generic Get
   get: async (key) => {
     await delay(300); // Simulate network latency
     const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
+
+    if (!data) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(data);
+    } catch {
+      localStorage.removeItem(key);
+      return null;
+    }
   },
 
   // Generic Save
@@ -31,10 +41,14 @@ export const StorageService = {
   getTestimonials: async () => {
     return (await StorageService.get(KEYS.TESTIMONIALS)) || [];
   },
-  
+
   addTestimonial: async (testimonial) => {
     const current = await StorageService.getTestimonials();
-    const newItem = { ...testimonial, id: Date.now(), date: new Date().toISOString() };
+    const newItem = {
+      ...testimonial,
+      id: Date.now(),
+      date: new Date().toISOString(),
+    };
     const updated = [newItem, ...current];
     await StorageService.save(KEYS.TESTIMONIALS, updated);
     return newItem;
@@ -42,8 +56,8 @@ export const StorageService = {
 
   saveMessage: async (message) => {
     const current = (await StorageService.get(KEYS.CONTACT_MSGS)) || [];
-    const newItem = { ...message, id: Date.now(), status: 'new' };
+    const newItem = { ...message, id: Date.now(), status: "new" };
     await StorageService.save(KEYS.CONTACT_MSGS, [...current, newItem]);
     return newItem;
-  }
+  },
 };

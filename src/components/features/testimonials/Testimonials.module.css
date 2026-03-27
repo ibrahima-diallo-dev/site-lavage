@@ -87,6 +87,12 @@
   cursor: not-allowed;
 }
 
+.errorMessage {
+  color: #b42318;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 :global([data-theme="light"]) .submitBtn {
   background-color: var(--color-primary);
   color: #ffffff;

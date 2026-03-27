@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 import styles from "./Home.module.css";
+import {
+  getRateLimitRemaining,
+  isHoneypotFilled,
+  isValidFutureOrTodayDate,
+  isValidPhone,
+  markRateLimitedAction,
+  sanitizePhone,
+  sanitizeText,
+} from "../utils/security";
 
 const phoneNumber = "+221768308484";
 const whatsappLink = `https://wa.me/${phoneNumber}`;
@@ -211,6 +220,9 @@ const heroStats = [
   { text: "7j/7", label: "Contact WhatsApp rapide" },
 ];
 
+const BOOKING_RATE_LIMIT_KEY = "site-booking-last-submit";
+const FORM_RATE_LIMIT_WINDOW_MS = 30_000;
+
 const useCountUp = (target, enabled) => {
   const [count, setCount] = useState(0);
 
@@ -336,15 +348,62 @@ export const Home = () => {
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    const service = String(formData.get("service") || "").trim();
+    const honeypot = String(formData.get("website") || "");
+    const service = sanitizeText(formData.get("service"), { maxLength: 80 });
     const date = String(formData.get("date") || "").trim();
-    const name = String(formData.get("name") || "").trim();
-    const phone = String(formData.get("phone") || "").trim();
+    const name = sanitizeText(formData.get("name"), { maxLength: 80 });
+    const phone = sanitizePhone(formData.get("phone"));
+
+    if (isHoneypotFilled(honeypot)) {
+      setBookingFeedback({
+        type: "success",
+        message: "Reservation envoyee avec succes.",
+      });
+      form.reset();
+      return;
+    }
 
     if (!service || !date || !name || !phone) {
       setBookingFeedback({
         type: "error",
         message: "Veuillez remplir tous les champs du formulaire.",
+      });
+      return;
+    }
+
+    if (!services.some((item) => item.name === service)) {
+      setBookingFeedback({
+        type: "error",
+        message: "Le service selectionne est invalide.",
+      });
+      return;
+    }
+
+    if (!isValidFutureOrTodayDate(date)) {
+      setBookingFeedback({
+        type: "error",
+        message: "Veuillez choisir une date valide a partir d'aujourd'hui.",
+      });
+      return;
+    }
+
+    if (!isValidPhone(phone)) {
+      setBookingFeedback({
+        type: "error",
+        message: "Veuillez entrer un numero de telephone valide.",
+      });
+      return;
+    }
+
+    const remaining = getRateLimitRemaining(
+      BOOKING_RATE_LIMIT_KEY,
+      FORM_RATE_LIMIT_WINDOW_MS,
+    );
+
+    if (remaining > 0) {
+      setBookingFeedback({
+        type: "error",
+        message: "Veuillez patienter 30 secondes avant un nouvel envoi.",
       });
       return;
     }
@@ -362,6 +421,8 @@ export const Home = () => {
     setBookingFeedback({ type: "", message: "" });
 
     try {
+      markRateLimitedAction(BOOKING_RATE_LIMIT_KEY);
+
       await emailjs.send(
         emailServiceId,
         emailTemplateId,
@@ -575,6 +636,14 @@ export const Home = () => {
             </p>
           </div>
           <form className={styles.bookingForm} onSubmit={handleBookingSubmit}>
+            <input
+              type="text"
+              name="website"
+              tabIndex="-1"
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", opacity: 0 }}
+            />
             <label htmlFor="service">Service</label>
             <select id="service" name="service" defaultValue="" required>
               <option value="" disabled>
@@ -596,6 +665,8 @@ export const Home = () => {
               name="name"
               type="text"
               placeholder="Votre nom"
+              autoComplete="name"
+              maxLength={80}
               required
             />
 
@@ -605,6 +676,9 @@ export const Home = () => {
               name="phone"
               type="tel"
               placeholder="+221 ..."
+              autoComplete="tel"
+              inputMode="tel"
+              maxLength={24}
               required
             />
 
