@@ -13,8 +13,10 @@
   padding: var(--spacing-md);
   border-radius: var(--radius-md);
   text-align: center;
-  border: 1px solid rgba(0,0,0,0.05);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -44,4 +46,18 @@
   font-size: 1rem;
   color: var(--color-text-main);
   font-weight: 600;
+}
+
+:global([data-theme="light"]) .card {
+  border-color: rgba(13, 47, 118, 0.22);
+  box-shadow: 0 10px 24px rgba(10, 28, 66, 0.08);
+}
+
+:global([data-theme="light"]) .icon {
+  background: rgba(13, 47, 118, 0.12);
+  color: var(--color-primary-dark);
+}
+
+:global([data-theme="light"]) .title {
+  color: var(--color-gold);
 }

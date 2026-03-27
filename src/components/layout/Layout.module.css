@@ -5,9 +5,9 @@
 }
 
 .header {
-  background: rgba(4, 7, 13, 0.88);
+  background: var(--color-bg-header);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(217, 163, 59, 0.24);
+  border-bottom: 1px solid var(--color-border-header);
   padding: 1.15rem 0;
   position: sticky;
   top: 0;
@@ -73,9 +73,9 @@
 }
 
 .footer {
-  background: linear-gradient(180deg, #070b14 0%, #05070d 100%);
+  background: var(--color-bg-footer);
   color: var(--color-text-main);
-  border-top: 1px solid rgba(217, 163, 59, 0.2);
+  border-top: 1px solid var(--color-border-footer);
   padding: 2.4rem 0 1.2rem;
   margin-top: auto;
 }
@@ -118,9 +118,42 @@
   margin-top: 0.35rem;
 }
 
+:global([data-theme="light"]) .footerGrid h3,
+:global([data-theme="light"]) .footerGrid h4,
+:global([data-theme="light"]) .logoWrap span {
+  color: var(--color-gold);
+}
+
+:global([data-theme="light"]) .footerLinks a,
+:global([data-theme="light"]) .subtext,
+:global([data-theme="light"]) .nav a {
+  color: var(--color-primary-dark);
+}
+
+:global([data-theme="light"]) .burger {
+  background: rgba(13, 47, 118, 0.08);
+  border-color: rgba(13, 47, 118, 0.3);
+}
+
+:global([data-theme="light"]) .burger span {
+  background: var(--color-primary-dark);
+}
+
+:global([data-theme="light"]) .mobileNav a {
+  border-bottom-color: rgba(13, 47, 118, 0.16);
+}
+
 /* ── Burger button (caché sur desktop) ─────────────── */
-.burger {
+/* ── Contrôles droite mobile (ThemeToggle + Burger) ─── */
+.mobileControls {
   display: none;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Burger button ──────────────────────────────────── */
+.burger {
+  display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
@@ -162,7 +195,7 @@
 .mobileOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--color-overlay-mobile);
   z-index: 98;
   backdrop-filter: blur(2px);
 }
@@ -174,8 +207,8 @@
   right: 0;
   height: 100vh;
   width: min(300px, 80vw);
-  background: linear-gradient(160deg, #07101e, #05070d);
-  border-left: 1px solid rgba(217, 163, 59, 0.2);
+  background: var(--color-bg-nav-mobile);
+  border-left: 1px solid var(--color-border-mobile-nav);
   z-index: 99;
   display: flex;
   flex-direction: column;
@@ -210,6 +243,19 @@
   font-size: 1rem !important;
 }
 
+:global([data-theme="light"]) .ctaButton,
+:global([data-theme="light"]) .mobileCtaButton {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #ffffff !important;
+}
+
+:global([data-theme="light"]) .ctaButton:hover,
+:global([data-theme="light"]) .mobileCtaButton:hover {
+  background: var(--color-primary-light) !important;
+  border-color: var(--color-primary-light) !important;
+}
+
 @keyframes slideIn {
   from {
     transform: translateX(100%);
@@ -233,7 +279,7 @@
     display: none;
   }
 
-  .burger {
+  .mobileControls {
     display: flex;
   }
 

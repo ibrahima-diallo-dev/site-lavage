@@ -6,13 +6,24 @@
   --color-gold-dark: #bb8221;
   --color-accent: #d9a33b;
 
+  /* Couleurs de texte — mode sombre (défaut) */
   --color-text-main: #eef3ff;
   --color-text-muted: #bac5df;
   --color-text-invert: #070d1f;
 
+  /* Couleurs de fond — mode sombre (défaut) */
   --color-bg-body: #05070d;
   --color-bg-card: #0a1224;
   --color-bg-input: #111a31;
+
+  /* Backgrounds de layout thématisés */
+  --color-bg-header: rgba(4, 7, 13, 0.88);
+  --color-bg-nav-mobile: linear-gradient(160deg, #07101e, #05070d);
+  --color-bg-footer: linear-gradient(180deg, #070b14 0%, #05070d 100%);
+  --color-border-header: rgba(217, 163, 59, 0.24);
+  --color-border-footer: rgba(217, 163, 59, 0.2);
+  --color-border-mobile-nav: rgba(217, 163, 59, 0.2);
+  --color-overlay-mobile: rgba(0, 0, 0, 0.6);
 
   --font-heading: "Rajdhani", "Segoe UI", sans-serif;
   --font-body: "Sora", "Segoe UI", sans-serif;
@@ -32,4 +43,23 @@
   /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
+}
+
+/* ── Mode clair ──────────────────────────────────────── */
+[data-theme="light"] {
+  --color-text-main: #0b1f46;
+  --color-text-muted: #2d4f84;
+  --color-text-invert: #eef3ff;
+
+  --color-bg-body: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-bg-input: #fff9ee;
+
+  --color-bg-header: #ffffff;
+  --color-bg-nav-mobile: linear-gradient(160deg, #ffffff, #fff8eb);
+  --color-bg-footer: linear-gradient(180deg, #ffffff 0%, #fff8eb 100%);
+  --color-border-header: rgba(217, 163, 59, 0.35);
+  --color-border-footer: rgba(217, 163, 59, 0.3);
+  --color-border-mobile-nav: rgba(217, 163, 59, 0.3);
+  --color-overlay-mobile: rgba(217, 163, 59, 0.15);
 }

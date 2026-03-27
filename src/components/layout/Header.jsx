@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./Layout.module.css";
+import { ThemeToggle } from "../common/ThemeToggle";
 
 const navLinks = [
   { href: "#home", label: "Accueil" },
@@ -30,17 +31,20 @@ export const Header = () => {
           </a>
         </div>
 
-        {/* Burger button — visible seulement sur mobile */}
-        <button
-          className={`${styles.burger} ${open ? styles.burgerOpen : ""}`}
-          onClick={() => setOpen((v) => !v)}
-          aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
-          aria-expanded={open}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+        {/* Contrôles droits — visibles uniquement sur mobile */}
+        <div className={styles.mobileControls}>
+          <ThemeToggle />
+          <button
+            className={`${styles.burger} ${open ? styles.burgerOpen : ""}`}
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={open}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
 
         {/* Nav desktop */}
         <nav className={styles.nav}>
@@ -52,6 +56,7 @@ export const Header = () => {
           <a href="#contact" className={styles.ctaButton}>
             Contact
           </a>
+          <ThemeToggle />
         </nav>
       </div>
 
