@@ -1,0 +1,146 @@
+.gallerySection {
+  background-color: var(--color-bg-body);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform var(--transition-normal);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  /* Replaced fixed height with aspect-ratio for better visibility */
+  aspect-ratio: 16 / 9;
+  min-height: 250px; /* Fallback */
+  overflow: hidden;
+  cursor: col-resize;
+  user-select: none;
+}
+
+.imageAfter, .imageBefore {
+  display: block;
+  /* Ensure images cover the area without distortion */
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Changed to contain to show full car. Or cover? 'Cover' is better for slider, 'contain' leaves gaps. */
+  /* User said "bien adapter". Cars need to be fully seen? usually 'cover' crops. 'contain' handles aspect ratios. */
+  /* Let's stick to cover for the UI, but ensure aspect ratio is adequate. */
+  /* If I use 'contain', the backgrounds need to match. */
+  /* Let's use 'cover' but with a better aspect ratio (4/3 might be taller/better for cars close up). */
+  object-fit: cover; 
+  object-position: center;
+}
+
+.imageBeforeWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  overflow: hidden;
+  border-right: 2px solid var(--color-accent);
+  z-index: 2;
+}
+
+/* 
+   CRITICAL FIX: The image INSIDE the wrapper must match the CONTAINER width
+   so it aligns perfectly with the background image.
+   Since we can't easily do "width: 100% of grandparent" in pure CSS,
+   we relies on the Javascript component to pass the width or we use a large width + object-fit.
+   
+   However, if we strictly set object-fit: cover and height: 100%, width: auto might work 
+   if aspect ratios are identical.
+   
+   Better fix implemented in Component: passing container width to style.
+   Here we just ensure it respects that.
+*/
+.imageBeforeWrapper .imageBefore {
+  max-width: none;
+  /* Width will be set via inline style from JS to match parent container width */
+}
+/* Re-thinking css for before/after: */
+/* The wrapper clips the image. The image inside needs to be the full width of the parent .imageContainer */
+/* We can use JS to set width, or use a container query/fixed width. */
+/* Let's try to set `width` of image to the width of the card. Since card is responsive, percent is tricky. */
+/* We can use a different trick: background-image. But we want <img> tags for Lazy Loading/SEO. */
+/* Solution: Set `width` of `.imageBefore` to be `100%` of `.imageContainer`? No, because parent is wrapper. */
+/* We can use `width` equal to the container width by using `calc` or just keep it simple. */
+/* ACTUALLY, sticking to `mock` placehold.co images which are fixed size simplifies this for MVP. */
+/* I will update the JS to set the width dynamically or just use a known aspect ratio. */
+
+.sliderHandle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  margin-left: -20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.sliderButton {
+  width: 30px;
+  height: 30px;
+  background: var(--color-accent);
+  color: var(--color-primary-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.sliderLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-accent);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.labels {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+  pointer-events: none;
+}
+
+.labelBefore, .labelAfter {
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+}
+
+.cardContent {
+  padding: var(--spacing-sm);
+}
+
+.cardContent h3 {
+  font-size: 1.1rem;
+  color: var(--color-text-main);
+  margin: 0;
+}
