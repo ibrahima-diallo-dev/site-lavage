@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import emailjs from "@emailjs/browser";
 import styles from "./Home.module.css";
 import {
   getRateLimitRemaining,
@@ -13,6 +12,7 @@ import {
 
 const phoneNumber = "+221768308484";
 const whatsappLink = `https://wa.me/${phoneNumber}`;
+const bookingWhatsAppNumber = phoneNumber.replace(/\D/g, "");
 const phoneNumber2 = "+221710143030";
 const whatsappLink2 = `https://wa.me/${phoneNumber2}`;
 
@@ -278,16 +278,6 @@ export const Home = () => {
     message: "",
   });
 
-  const emailServiceId =
-    import.meta.env.VITE_APP_EMAILJS_SERVICE_ID ||
-    import.meta.env.VITE_EMAILJS_SERVICE_ID;
-  const emailTemplateId =
-    import.meta.env.VITE_APP_EMAILJS_TEMPLATE_ID ||
-    import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-  const emailPublicKey =
-    import.meta.env.VITE_APP_EMAILJS_PUBLIC_KEY ||
-    import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setIsLoaderVisible(false);
@@ -408,50 +398,36 @@ export const Home = () => {
       return;
     }
 
-    if (!emailServiceId || !emailTemplateId || !emailPublicKey) {
-      setBookingFeedback({
-        type: "error",
-        message:
-          "Configuration EmailJS manquante. Ajoutez les variables VITE_APP_EMAILJS_* dans votre fichier .env.",
-      });
-      return;
-    }
-
     setIsBookingSubmitting(true);
     setBookingFeedback({ type: "", message: "" });
 
     try {
       markRateLimitedAction(BOOKING_RATE_LIMIT_KEY);
 
-      await emailjs.send(
-        emailServiceId,
-        emailTemplateId,
-        {
-          customer_name: name,
-          customer_phone: phone,
-          service_name: service,
-          reservation_date: date,
-          business_name: "ABABACAR BUSINESS AGENCY",
-          whatsapp_1: "+221 76 830 84 84",
-          whatsapp_2: "+221 71 014 30 30",
-          message: `Nouvelle reservation: ${service} le ${date}. Client: ${name} (${phone}).`,
-        },
-        {
-          publicKey: emailPublicKey,
-        },
-      );
+      const whatsappMessage = [
+        "Bonjour, je souhaite reserver un lavage.",
+        `Service: ${service}`,
+        `Date: ${date}`,
+        `Nom: ${name}`,
+        `Telephone: ${phone}`,
+      ].join("\n");
+
+      const bookingLink = `https://wa.me/${bookingWhatsAppNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+      const popup = window.open(bookingLink, "_blank", "noopener,noreferrer");
+
+      if (!popup) {
+        window.location.href = bookingLink;
+      }
 
       setBookingFeedback({
         type: "success",
-        message:
-          "Reservation envoyee avec succes. Le proprietaire recevra votre demande par email.",
+        message: "Redirection vers WhatsApp effectuee avec succes.",
       });
       form.reset();
     } catch {
       setBookingFeedback({
         type: "error",
-        message:
-          "Echec de l'envoi. Verifiez les cles EmailJS et la configuration du template.",
+        message: "Impossible d'ouvrir WhatsApp. Veuillez reessayer.",
       });
     } finally {
       setIsBookingSubmitting(false);
